@@ -76,3 +76,54 @@ divide_1(double val1, double val2,  CLIENT *clnt)
 	}
 	return (&clnt_res);
 }
+
+result *
+suma_2(MiVector v1, MiVector v2,  CLIENT *clnt)
+{
+	suma_2_argument arg;
+	static result clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.v1 = v1;
+	arg.v2 = v2;
+	if (clnt_call (clnt, suma, (xdrproc_t) xdr_suma_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_result, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+result *
+restar_2(MiVector v1, MiVector v2,  CLIENT *clnt)
+{
+	restar_2_argument arg;
+	static result clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.v1 = v1;
+	arg.v2 = v2;
+	if (clnt_call (clnt, restar, (xdrproc_t) xdr_restar_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_result, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+result *
+multiplica_2(MiVector v1, MiVector v2,  CLIENT *clnt)
+{
+	multiplica_2_argument arg;
+	static result clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.v1 = v1;
+	arg.v2 = v2;
+	if (clnt_call (clnt, multiplica, (xdrproc_t) xdr_multiplica_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_result, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}

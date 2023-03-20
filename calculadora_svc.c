@@ -40,6 +40,24 @@ _divide_1 (divide_1_argument *argp, struct svc_req *rqstp)
 	return (divide_1_svc(argp->val1, argp->val2, rqstp));
 }
 
+static result *
+_suma_2 (suma_2_argument *argp, struct svc_req *rqstp)
+{
+	return (suma_2_svc(argp->v1, argp->v2, rqstp));
+}
+
+static result *
+_restar_2 (restar_2_argument *argp, struct svc_req *rqstp)
+{
+	return (restar_2_svc(argp->v1, argp->v2, rqstp));
+}
+
+static result *
+_multiplica_2 (multiplica_2_argument *argp, struct svc_req *rqstp)
+{
+	return (multiplica_2_svc(argp->v1, argp->v2, rqstp));
+}
+
 static void
 calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
@@ -102,12 +120,68 @@ calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
+static void
+calculadora_2(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		suma_2_argument suma_2_arg;
+		restar_2_argument restar_2_arg;
+		multiplica_2_argument multiplica_2_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case suma:
+		_xdr_argument = (xdrproc_t) xdr_suma_2_argument;
+		_xdr_result = (xdrproc_t) xdr_result;
+		local = (char *(*)(char *, struct svc_req *)) _suma_2;
+		break;
+
+	case restar:
+		_xdr_argument = (xdrproc_t) xdr_restar_2_argument;
+		_xdr_result = (xdrproc_t) xdr_result;
+		local = (char *(*)(char *, struct svc_req *)) _restar_2;
+		break;
+
+	case multiplica:
+		_xdr_argument = (xdrproc_t) xdr_multiplica_2_argument;
+		_xdr_result = (xdrproc_t) xdr_result;
+		local = (char *(*)(char *, struct svc_req *)) _multiplica_2;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
 int
 main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
 	pmap_unset (CALCULADORA, CALCULADORA_1);
+	pmap_unset (CALCULADORA, CALCULADORA_2);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
@@ -118,6 +192,10 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_1, udp).");
 		exit(1);
 	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_2, calculadora_2, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_2, udp).");
+		exit(1);
+	}
 
 	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
 	if (transp == NULL) {
@@ -126,6 +204,10 @@ main (int argc, char **argv)
 	}
 	if (!svc_register(transp, CALCULADORA, CALCULADORA_1, calculadora_1, IPPROTO_TCP)) {
 		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_1, tcp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_2, calculadora_2, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_2, tcp).");
 		exit(1);
 	}
 

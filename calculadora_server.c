@@ -45,3 +45,51 @@ divide_1_svc(double val1, double val2,  struct svc_req *rqstp)
 
 	return &result;
 }
+
+result *
+suma_2_svc(MiVector v1, MiVector v2,  struct svc_req *rqstp)
+{
+	static result  result;
+
+	MiVector aux;
+
+	aux.a = v1.a + v2.a;
+	aux.b = v1.b + v2.b;
+	aux.c = v1.c + v2.c;
+
+	result.result_vect=aux;
+
+	return &result;
+}
+
+result *
+restar_2_svc(MiVector v1, MiVector v2,  struct svc_req *rqstp)
+{
+	static result  result;
+
+	MiVector aux;
+
+	aux.a = v1.a - v2.a;
+	aux.b = v1.b - v2.b;
+	aux.c = v1.c - v2.c;
+
+	result.result_vect=aux;
+
+	return &result;
+}
+
+result *
+multiplica_2_svc(MiVector v1, MiVector v2,  struct svc_req *rqstp)
+{
+	static result  result;
+
+	MiVector aux;
+
+	aux.a = v1.b*v2.c + v1.c*v2.b;
+	aux.b = v1.a*v2.c + v1.c*v2.a;
+	aux.c = v1.a*v2.b + v1.b*v2.a;
+
+	result.result_vect=aux;
+
+	return &result;
+}

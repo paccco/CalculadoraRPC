@@ -6,9 +6,9 @@
 CLIENT = calculadora_client
 SERVER = calculadora_server
 
-SOURCES_CLNT.c =
+SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 
-SOURCES_SVC.c =
+SOURCES_SVC.c = 
 SOURCES_SVC.h = 
 SOURCES.x = calculadora.x
 

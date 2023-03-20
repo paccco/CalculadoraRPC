@@ -6,10 +6,26 @@
 #include "calculadora.h"
 
 bool_t
+xdr_MiVector (XDR *xdrs, MiVector *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_double (xdrs, &objp->a))
+		 return FALSE;
+	 if (!xdr_double (xdrs, &objp->b))
+		 return FALSE;
+	 if (!xdr_double (xdrs, &objp->c))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_result (XDR *xdrs, result *objp)
 {
 	register int32_t *buf;
 
+	 if (!xdr_MiVector (xdrs, &objp->result_vect))
+		 return FALSE;
 	 if (!xdr_double (xdrs, &objp->result_value))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->code))
@@ -53,6 +69,36 @@ xdr_divide_1_argument (XDR *xdrs, divide_1_argument *objp)
 	 if (!xdr_double (xdrs, &objp->val1))
 		 return FALSE;
 	 if (!xdr_double (xdrs, &objp->val2))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_suma_2_argument (XDR *xdrs, suma_2_argument *objp)
+{
+	 if (!xdr_MiVector (xdrs, &objp->v1))
+		 return FALSE;
+	 if (!xdr_MiVector (xdrs, &objp->v2))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_restar_2_argument (XDR *xdrs, restar_2_argument *objp)
+{
+	 if (!xdr_MiVector (xdrs, &objp->v1))
+		 return FALSE;
+	 if (!xdr_MiVector (xdrs, &objp->v2))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_multiplica_2_argument (XDR *xdrs, multiplica_2_argument *objp)
+{
+	 if (!xdr_MiVector (xdrs, &objp->v1))
+		 return FALSE;
+	 if (!xdr_MiVector (xdrs, &objp->v2))
 		 return FALSE;
 	return TRUE;
 }

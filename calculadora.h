@@ -14,7 +14,15 @@ extern "C" {
 #endif
 
 
+struct MiVector {
+	double a;
+	double b;
+	double c;
+};
+typedef struct MiVector MiVector;
+
 struct result {
+	MiVector result_vect;
 	double result_value;
 	int code;
 };
@@ -43,6 +51,24 @@ struct divide_1_argument {
 	double val2;
 };
 typedef struct divide_1_argument divide_1_argument;
+
+struct suma_2_argument {
+	MiVector v1;
+	MiVector v2;
+};
+typedef struct suma_2_argument suma_2_argument;
+
+struct restar_2_argument {
+	MiVector v1;
+	MiVector v2;
+};
+typedef struct restar_2_argument restar_2_argument;
+
+struct multiplica_2_argument {
+	MiVector v1;
+	MiVector v2;
+};
+typedef struct multiplica_2_argument multiplica_2_argument;
 
 #define CALCULADORA 0x20000001
 #define CALCULADORA_1 1
@@ -77,22 +103,50 @@ extern  result * divide_1();
 extern  result * divide_1_svc();
 extern int calculadora_1_freeresult ();
 #endif /* K&R C */
+#define CALCULADORA_2 2
+
+#if defined(__STDC__) || defined(__cplusplus)
+extern  result * suma_2(MiVector , MiVector , CLIENT *);
+extern  result * suma_2_svc(MiVector , MiVector , struct svc_req *);
+extern  result * restar_2(MiVector , MiVector , CLIENT *);
+extern  result * restar_2_svc(MiVector , MiVector , struct svc_req *);
+extern  result * multiplica_2(MiVector , MiVector , CLIENT *);
+extern  result * multiplica_2_svc(MiVector , MiVector , struct svc_req *);
+extern int calculadora_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+extern  result * suma_2();
+extern  result * suma_2_svc();
+extern  result * restar_2();
+extern  result * restar_2_svc();
+extern  result * multiplica_2();
+extern  result * multiplica_2_svc();
+extern int calculadora_2_freeresult ();
+#endif /* K&R C */
 
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
+extern  bool_t xdr_MiVector (XDR *, MiVector*);
 extern  bool_t xdr_result (XDR *, result*);
 extern  bool_t xdr_suma_1_argument (XDR *, suma_1_argument*);
 extern  bool_t xdr_restar_1_argument (XDR *, restar_1_argument*);
 extern  bool_t xdr_multiplica_1_argument (XDR *, multiplica_1_argument*);
 extern  bool_t xdr_divide_1_argument (XDR *, divide_1_argument*);
+extern  bool_t xdr_suma_2_argument (XDR *, suma_2_argument*);
+extern  bool_t xdr_restar_2_argument (XDR *, restar_2_argument*);
+extern  bool_t xdr_multiplica_2_argument (XDR *, multiplica_2_argument*);
 
 #else /* K&R C */
+extern bool_t xdr_MiVector ();
 extern bool_t xdr_result ();
 extern bool_t xdr_suma_1_argument ();
 extern bool_t xdr_restar_1_argument ();
 extern bool_t xdr_multiplica_1_argument ();
 extern bool_t xdr_divide_1_argument ();
+extern bool_t xdr_suma_2_argument ();
+extern bool_t xdr_restar_2_argument ();
+extern bool_t xdr_multiplica_2_argument ();
 
 #endif /* K&R C */
 
