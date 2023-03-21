@@ -1,0 +1,118 @@
+\documentclass[12pt]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{hyperref}
+\usepackage{vmargin}
+
+\usepackage{titlesec}
+\usepackage{listings}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\title {Práctica 2}
+\date{21 de marzo}
+\author{Francisco de Asís Carrasco Conde}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\chapter{Creación de la calculadora}
+    \section{Introducción}
+        Para poder crear la calculadora vamos a tener que necesitar el archivo formato rpc o ".x".
+        En este vamos a poner todas las estructuras de datos con las que vamos a trabajar, las funciones
+        que va a realizar el servidor con sus numeros de procedimiento, las distintas versiones de la calculadora
+        que vayamos a implementar y el numero de programa.
+
+        En mi caso voy a usar dos estructuras:
+    \begin{lstlisting}
+
+    struct result{
+        MiVector result_vect;
+        double result_value;
+        int code;
+    };
+
+    struct MiVector{
+        double a;
+        double b; 
+        double c;
+    };
+    \end{lstlisting}
+
+        También voy a implementar 2 versiones de la calculadora, una para los cálculos simples y otra para cálculos
+        con vectores. En el archivo rpc quedaría tal que así:
+
+        \newpage
+        \begin{lstlisting}
+
+program CALCULADORA {
+    version CALCULADORA_1 {
+        result suma(double val1, double val2) = 1;
+        result restar(double val1, double val2) = 2;
+        result multiplica(double val1, double val2) = 3;
+        result divide(double val1, double val2) = 4;
+    } = 1;
+        
+    version CALCULADORA_2{
+        result suma(MiVector v1, MiVector v2) = 1;
+        result restar(MiVector v1, MiVector v2) = 2;
+        result multiplica(MiVector v1, MiVector v2) = 3;
+    } = 2;
+        
+} = 0x20000001;
+
+        \end{lstlisting}
+
+Después de haber creado el archivo ejecutamos el comando:
+\begin{lstlisting}
+# rcpgen -NCa calculadora.x
+\end{lstlisting}
+Y se nos crearan todos los archivos que tendremos que ir rellenando con código c.
+
+\section{Contenido servidor.c}
+    En el servidor.c generado por rpc se nos creará una plantilla con las funciones a
+    rellenar, en estas ponemos el codigo con lo que queramos que haga cada función, por
+    ejemplo en suma\_1\_svc, el código para sumar dos numeros. En suma\_2\_svc, tengo el código
+    para sumar 2 vectores. Y asi respectivamente.
+
+\section{Contenido cliente.c}
+    En cliente.c vamos a rellenar dos cosas, el main y las funciones de las distintas versiones,
+    en mi caso son 2. La calculadora\_1 es para las operaciones básicas y la 2 para operaciones
+    con vectores.
+
+    Lo que hay que rellenar en las versiones de las calculadoras son llamadas a las funciones del servidor, La
+    evaluacion de respuesta por si devuelve algún código de error y el retorno del valor deseado.
+
+    En el main la usaremos para filtrar la entrada de datos del usuario. Si se pone un número de argumentos y/o argumentos
+    incorrectos devolverá un error.
+
+\chapter{Forma de usar la calculadora}
+
+\section{Calculadora Básica}
+
+Los números que se pueden meten por argumentos son tipo double y podemos sumar, restar, multiplicar y dividir.
+El formato es el siguiente:
+
+\begin{lstlisting}
+# ./calculadora_client <servidor> <numero1> <signoOperacion> <numero2>
+\end{lstlisting}
+
+\section{Calculadora Vectores}
+
+Para acceder a esta versión de la calculadora hay que poner lo siguiente:
+
+\begin{lstlisting}
+# ./calculadora_client <servidor> V
+\end{lstlisting}
+
+Una vez hayamos introducido el comando se nos preguntará con que números queremos operar. El tamaño
+de los vectores es fijo: 3 componentes. Los numeros se meten uno seguido de otro.
+
+Luego nos pedirá la operación que queramos realizar, en esta versión hay se puede sumar, restar y multiplicar.
+La multiplicación es vectorial.
+
+\end{document}
